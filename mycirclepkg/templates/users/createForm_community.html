@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Community - MyCIRCLE</title>
+    <link rel="stylesheet" href="/static/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+      body{
+            background-color: rgb(243, 243, 245);
+            color:rgb(27, 27, 109);
+            
+          }
+        h1{
+          font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+<body>
+  <header>
+  <nav class="nav-bar container d-flex align-items-center justify-content-between py-3">
+    <div class="d-flex align-items-center gap-2">
+      <img src="/static/image/circle logo.jpg" alt="brand logo" width="40" height="40">
+      <h1 class="h4 mb-0">MyCIRCLE</h1>
+    </div>
+    <div class="admin_nav d-flex align-items-center gap-3">
+    <a href="{{ url_for('notifications') }}" class="text-decoration-none">
+    <div><i class="fa-solid fa-bell"></i></div>
+    </a>
+    <a href="{{ url_for('user_profile') }}" class="text-decoration-none">
+      <h5 class="admin_profile mb-0 ms-5">
+       {{ session['useronline'] }} <i class="fa-solid fa-circle-user"></i>
+      </h5>
+    </a>
+    <a href="{{ url_for('user_logout') }}" class="btn btn-outline-primary btn-sm">Logout</a>
+</div>
+
+  </nav>
+</header>
+<section class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+      
+      <h2 class="text-center mb-4">Build a home for your Community</h2>
+
+      <form method="POST" enctype="multipart/form-data">
+        {{ communityform.hidden_tag() }}
+
+        <div class="mb-3">
+          {{ communityform.name_com.label(class="form-label") }}
+          {{ communityform.name_com(class="form-control", id="cname") }}
+          {% if communityform.name_com.errors %}
+            <div class="text-danger small">
+              {{ communityform.name_com.errors[0] }}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          {{ communityform.desc_com.label(class="form-label") }}
+          {{ communityform.desc_com(class="form-control", id="description", rows="3") }}
+          {% if communityform.desc_com.errors %}
+            <div class="text-danger small">
+              {{ communityform.desc_com.errors[0] }}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          <label for="category" class="form-label">Select Category</label>
+          <select class="form-select p-2 border-secondary form-control" id="category" name="category_id">
+            <option value="" disabled selected>Select Category</option>
+            {% for c in categories %}
+              <option value="{{c.category_id}}" {% if c.category_id == communityform.category_id.data %}selected{% endif %}>{{c.category_name|capitalize}}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        {{ communityform.btn(class="btn btn-primary w-100") }}
+      </form>
+
+    </div>
+  </div> 
+</section>
+<script src="/static/bootstrap/js/bootstrap.bundle.js"></script>
+</body>
+</html>

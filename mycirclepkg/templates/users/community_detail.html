@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Community detail page for MyCIRCLE">
+    <title>{{ community.communityname }} - MyCIRCLE</title>
+    <link rel="stylesheet" href="/static/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+<style>
+
+</style>
+</head>
+<body>
+   <header>
+  <nav class="nav-bar container d-flex align-items-center justify-content-between py-3">
+    <div class="d-flex align-items-center gap-2">
+      <img src="/static/image/circle logo.jpg" alt="brand logo" width="40" height="40">
+      <h1 class="h4 mb-0">MyCIRCLE</h1>
+    </div>
+    <div class="admin_nav d-flex align-items-center gap-3">
+    <a href="{{ url_for('notifications') }}" class="text-decoration-none">
+    <div><i class="fa-solid fa-bell"></i></div>
+    </a>
+    <a href="{{ url_for('user_profile') }}" class="text-decoration-none">
+      <h5 class="admin_profile mb-0 ms-5">
+       {{ session['useronline'] }} <i class="fa-solid fa-circle-user"></i>
+      </h5>
+    </a>
+    <a href="{{ url_for('user_logout') }}" class="btn btn-outline-primary btn-sm">Logout</a>
+</div>
+
+  </nav>
+</header>
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h4 class="mb-0">{{ community.communityname }}</h4>
+            {% if is_admin %}
+            <a href="{{ url_for('edit_community', community_id=community.idcommunity) }}" class="btn btn-sm btn-warning">Edit Details</a>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <p><strong>Description:</strong> {{ community.community_desc }}</p>
+            <p><strong>Category:</strong> {{ community.category.category_name }}</p>
+            <p><strong>Created By:</strong> 
+            {{ admin_user.user_username if admin_user else community.createdByUserId }}
+            </p>
+            <p><strong>Members:</strong> {{ member_count }}</p>
+        </div>
+        {% if is_admin %}
+        <div class="card-footer">
+            <h5>Pending Join Requests</h5>
+            {% if pending_requests %}
+                <ul class="list-group">
+                {% for req in pending_requests %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center join-request-item" data-member="{{ req.member_id }}">
+                        {{ req.member.user_username }}
+                        <div>
+                            <button class="btn btn-success btn-sm approve-btn" data-action="approve" data-community="{{ community.idcommunity }}" data-member="{{ req.member_id }}">Approve</button>
+                            <button class="btn btn-danger btn-sm reject-btn" data-action="reject" data-community="{{ community.idcommunity }}" data-member="{{ req.member_id }}">Reject</button>
+                        </div>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">No pending requests.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script src="/static/jquery-4.0.0.min.js"></script>
+                <script>
+                $(document).ready(function(){
+                    $('.approve-btn, .reject-btn').click(function(e){
+                        e.preventDefault();
+                        var btn = $(this);
+                        var action = btn.data('action');
+                        var communityId = btn.data('community');
+                        var memberId = btn.data('member');
+                        var csrf = '{{ csrf_token() }}';
+                        btn.prop('disabled', true).text('Processing...');
+                        $.ajax({
+                            url: `/community/request/${communityId}/${memberId}/${action}`,
+                            method: 'POST',
+                            data: {csrf_token: csrf},
+                            success: function(response){
+                                btn.closest('.join-request-item').fadeOut(300, function(){ $(this).remove(); });
+                            },
+                            error: function(){
+                                btn.prop('disabled', false).text(action.charAt(0).toUpperCase() + action.slice(1));
+                                alert('Error processing request.');
+                     }
+               });
+             });
+         });
+</script>
+                
+</body>
+</html> 

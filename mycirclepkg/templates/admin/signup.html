@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Sign Up</title>
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/bootstrap/bootstrap-icons.css" rel="stylesheet">
+    <link href="/static/css/admin.css" rel="stylesheet">
+    <style>
+        
+    </style>
+</head>
+<body class="signup-body">
+<header></header>
+  <nav class="nav-bar container d-flex align-items-center justify-content-between py-3">
+    <div class="d-flex align-items-center gap-2">
+      <img src="/static/image/circle logo.jpg" alt="brand logo" width="40" height="40">
+      <h1 class="h4 mb-0">MyCIRCLE</h1>
+    </div>
+    <div class="admin_nav d-flex align-items-center gap-3">
+    <a href="{{ url_for('notifications') }}" class="text-decoration-none">
+    <div><i class="fa-solid fa-bell"></i></div>
+    </a>
+    <a href="{{ url_for('admin_profile') }}" class="text-decoration-none">
+      <h5 class="admin_profile mb-0 ms-5">
+       {{ session['adminonline'] }} <i class="fa-solid fa-circle-user"></i>
+      </h5>
+    </a>
+    <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-primary btn-sm">Logout</a>
+</div>
+
+</nav>
+</header>
+ {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-3">
+                {% for category, message in messages %}
+                {% if category == 'admin' %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %} 
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+        <div class="signup-body" style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+            <div class="glass-card animate__animated animate__fadeInUp">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold text-dark">Admin Sign Up</h3>
+                <p class="text-muted small">Create your admin account to access the dashboard.</p>
+        </div>
+    <form method="POST" action="{{ url_for('admin_create') }}">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.username.label(class="form-label text-muted small fw-bold") }}
+            {{ form.username(class="form-control bg-light", placeholder="Username") }}
+        </div>
+        <div class="mb-3">
+            {{ form.email.label(class="form-label text-muted small fw-bold") }}
+            {{ form.email(class="form-control bg-light", placeholder="admin@email.com") }}
+        </div>
+        <div class="mb-3">
+            {{ form.password.label(class="form-label text-muted small fw-bold") }}
+            {{ form.password(class="form-control bg-light", placeholder="Password") }}
+        </div>
+        <div class="mb-3">
+            {{ form.con_password.label(class="form-label text-muted small fw-bold") }}
+            {{ form.con_password(class="form-control bg-light", placeholder="Confirm Password") }}
+        </div>
+        <div class="d-grid mb-3">
+            {{ form.btncreate(class="btn btn-primary py-2 fw-bold shadow-sm") }}
+        </div>
+        <div class="text-center">
+            <a href="{{ url_for('admin_login') }}" class="text-decoration-none small text-muted hover-link">
+                <i class="bi bi-arrow-left me-1"></i> Back to Admin Login
+            </a>
+        </div>
+    </form>
+</div>
+</div>
+<footer class="border-top py-3 text-center text-muted small">
+  <p class="mb-1" style="font-size:1.1rem;"><em>&copy; Wakadobe Labs. All rights reserved.</em></p>
+  <script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+</footer>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

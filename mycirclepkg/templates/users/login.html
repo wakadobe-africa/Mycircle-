@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+
+.log_img {
+  width: 70%;
+  max-width: 100%;
+  height: auto;
+}
+
+.log_img p {
+  margin: 0;
+  font-size:20px;
+}
+
+
+        
+</style>
+</head>
+<body>
+    <header class="border-bottom">
+  <nav class="nav-bar navbar-expand-lgcontainer d-flex align-items-center justify-content-between py-3">
+    <div class="d-flex align-items-center gap-2">
+      <img src="/static/image/circle logo.jpg" alt="brand logo" width="40" height="40">
+      <h1 class="h4 mb-0">MyCIRCLE</h1>
+    </div>
+    <ul class="nav-list d-none d-md-flex gap-3 mb-0">
+      <li><a href="#">Community</a></li>
+      <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Features
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Gifting</a></li>
+            <li><a class="dropdown-item" href="#">Livestream</a></li>
+            <li><a class="dropdown-item" href="">Events</a></li>
+            <li><a class="dropdown-item" href="#">Polls</a></li>
+          </ul>
+        </li>
+      <li><a href="#">Members</a></li>
+    </ul>
+     <aside class="nav-btn d-flex gap-2">
+      <a href="{{url_for('user_login')}}" class="btn btn-outline-primary btn-sm">Log In</a>
+      <a href="{{url_for('user_register')}}" class="btn btn-primary btn-sm">Get Started</a>
+    </aside>
+
+  </nav>
+</header>
+
+
+<div class="container min-vh-100 d-flex flex-column justify-content-center align-items-center py-5">
+    
+    
+<img src="{{ url_for('static', filename='image/login.jpg') }}" 
+  alt="Circular image featuring interconnected shapes representing community and unity, set against a light background. The design conveys a welcoming and inclusive atmosphere." 
+  class="mb-4 rounded-circle img-fluid"
+  style="width: 120px; height: 120px; object-fit: cover;">
+
+
+<!-- Login Card -->
+<div class="card shadow-sm w-100" id="loginCard" style="max-width: 480px;">
+    <div class="card-body p-4">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    {% if category != 'admin' %}
+                                    <div class="alert alert-{{ 'danger' if category == 'user' else category }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+     <h4 class="card-title text-center mb-4">Log In</h4>
+     <form method="POST" action="">
+      {{ loginform.hidden_tag() }}
+      <div class="mb-3">
+       {{ loginform.email.label(class="form-label fw-semibold") }}
+       {{ loginform.email(class="form-control", placeholder="Enter your email") }}
+       {% if loginform.email.errors %}
+        {% for error in loginform.email.errors %}
+        <small class="invalid-feedback d-block">{{ error }}</small>
+        {% endfor %}
+       {% endif %}
+      </div>
+      <div class="mb-3">
+       {{ loginform.password.label(class="form-label fw-semibold") }}
+       {{ loginform.password(class="form-control", placeholder="Enter your password") }}
+       {% if loginform.password.errors %}
+        {% for error in loginform.password.errors %}
+        <small class="invalid-feedback d-block">{{ error }}</small>
+        {% endfor %}
+       {% endif %}
+      </div>
+      <span class="text-muted small mb-3 d-block">Forgot password?
+        <a href="#" id="showResetBtn" class="text-decoration-none">Reset it here</a>.
+      </span>
+      <div class="d-grid mt-4">
+        {{ loginform.btn(class="btn btn-primary") }}
+      </div>
+      <div class="text-center mt-3">
+        <p class="text-muted small mb-0">Don't have an account?
+          <a href="{{url_for('user_register')}}" class="text-danger text-decoration-none">Register</a>
+        </p>
+      </div>
+     </form>
+    </div>
+</div>
+
+<!-- Password Reset Card (hidden by default) -->
+<div class="card shadow-sm w-100 d-none" id="resetCard" style="max-width: 480px;">
+  <div class="card-body p-4">
+    <h4 class="card-title text-center mb-1">Reset Password</h4>
+    <p class="text-muted text-center small mb-4">Enter your registered email and choose a new password.</p>
+
+    <form id="resetForm">
+      {{ resetform.hidden_tag() }}
+      <div class="mb-3">
+        {{ resetform.email.label(class="form-label fw-semibold") }}
+        {{ resetform.email(class="form-control", placeholder="Your registered email") }}
+        {% if resetform.email.errors %}
+          {% for error in resetform.email.errors %}
+            <small class="invalid-feedback d-block">{{ error }}</small>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <div class="mb-3">
+        {{ resetform.new_password.label(class="form-label fw-semibold") }}
+        {{ resetform.new_password(class="form-control", placeholder="New password (min 8 chars)") }}
+        {% if resetform.new_password.errors %}
+          {% for error in resetform.new_password.errors %}
+            <small class="invalid-feedback d-block">{{ error }}</small>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <div class="mb-3">
+        {{ resetform.confirm_new_password.label(class="form-label fw-semibold") }}
+        {{ resetform.confirm_new_password(class="form-control", placeholder="Confirm new password") }}
+        {% if resetform.confirm_new_password.errors %}
+          {% for error in resetform.confirm_new_password.errors %}
+            <small class="invalid-feedback d-block">{{ error }}</small>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <div class="d-grid mt-4">
+        <button type="submit" class="btn btn-primary" id="resetSubmitBtn">Reset Password</button>
+      </div>
+      <small id="resetError" class="text-danger d-none mt-2 d-block"></small>
+      <div class="text-center mt-3">
+        <a href="#" id="backToLoginBtn" class="text-muted small text-decoration-none">
+          <i class="fa-solid fa-arrow-left me-1"></i>Back to Login
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/static/jquery-4.0.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Default: login card is visible, reset card stays hidden by d-none class.
+
+    // Show reset card and hide login card.
+    $('#showResetBtn').on('click', function (e) {
+      e.preventDefault();
+      $('#loginCard').addClass('d-none');
+      $('#resetCard').removeClass('d-none');
+      $('#resetError').addClass('d-none').text('');
+    });
+
+    // Show login card and hide reset card.
+    $('#backToLoginBtn').on('click', function (e) {
+      e.preventDefault();
+      $('#resetCard').addClass('d-none');
+      $('#loginCard').removeClass('d-none');
+      $('#resetError').addClass('d-none').text('');
+    });
+
+    // Send email, new_password and confirm_new_password to reset route.
+    $('#resetForm').on('submit', function (e) {
+      e.preventDefault();
+      $('#resetError').addClass('d-none').text('');
+      $('#resetSubmitBtn').prop('disabled', true).text('Resetting...');
+
+      $.ajax({
+        url: '/password-reset/',
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function (response) {
+          if (response.success) {
+            // Password updated successfully, return user to login.
+            window.location.href = response.redirect;
+          } else {
+            $('#resetSubmitBtn').prop('disabled', false).text('Reset Password');
+            $('#resetError').removeClass('d-none').text(response.message || 'Unable to reset password.');
+          }
+        },
+        error: function () {
+          $('#resetSubmitBtn').prop('disabled', false).text('Reset Password');
+          $('#resetError').removeClass('d-none').text('Request failed. Please try again.');
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

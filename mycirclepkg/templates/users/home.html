@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MyCIRCLE</title>
+    <link rel="stylesheet" href="/static/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+<style>
+</style>
+</head>
+<body>
+   <header>
+  <nav class="nav-bar container d-flex align-items-center justify-content-between py-3">
+    <div class="d-flex align-items-center gap-2">
+      <img src="/static/image/circle logo.jpg" alt="brand logo" width="40" height="40">
+      <h1 class="h4 mb-0">MyCIRCLE</h1>
+    </div>
+    <div class="admin_nav d-flex align-items-center gap-3">
+    <a href="{{ url_for('notifications') }}" class="text-decoration-none">
+    <div><i class="fa-solid fa-bell"></i></div>
+    </a>
+    <a href="{{ url_for('user_profile') }}" class="text-decoration-none">
+      <h5 class="admin_profile mb-0 ms-5">
+       <em>Hi</em> {{ session['useronline'] }} <i class="fa-solid fa-circle-user"></i>
+      </h5>
+    </a>
+    <a href="{{ url_for('user_logout') }}" class="btn btn-outline-primary btn-sm">Logout</a>
+</div>
+
+  </nav>
+</header>
+<div class="upper_hero">
+
+  <h2 class="text-end m-3"><a href="{{ url_for('create_community') }}" class="create-community-link">Create your Community
+    <i class="fa-solid fa-plus"></i>
+    </a>
+   </h2>
+
+  <div class="search-area">
+    <h4>Discover Communities >>>>></h4>
+    <form class="d-flex" role="search">
+      <input class="form-control me-2" type="search" placeholder="Explore communities" aria-label="Search" id="community-search" autocomplete="off"/>
+      <button class="btn btn-outline-info" type="submit">Search</button>
+    </form>
+  </div>
+ 
+</div>
+<div class="community-section container">
+    <div class="row g-4" id="community-list">
+      {% for community in communities %}
+      <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+        <div class="card community-card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">
+              {{ community.communityname }}
+            </h5>
+            <h6 class="card-subtitle mb-2 text-muted">
+              {{ community.category.category_name if community.category else 'Uncategorized' }}
+            </h6>
+            <p class="card-text flex-grow-1">
+              {{ community.community_desc }}
+            </p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+</div>
+<div class="lower_hero">
+ 
+</div>
+</div>
+<div class="nav-foot">
+  <nav class="sticky-nav">
+        <a href="{{ url_for('dashboard') }}"><i class="fa-solid fa-house"></i>Home</a>
+        <a href="{{ url_for('my_communities') }}"><i class="fa-solid fa-users"></i>My Communities</a>
+        <a href="{{ url_for('communities') }}"><i class="fa-solid fa-layer-group"></i>Community</a>
+        <a href="{{ url_for('user_profile') }}"><i class="fa-solid fa-circle-user"></i>Profile</a>
+</nav>
+ </div>
+<script src="/static/bootstrap/js/bootstrap.bundle.js"></script>
+</script>
+<script src="/static/jquery-4.0.0.min.js"></script>
+<script>
+$(document).ready(function() {
+  $('#community-search').on('keyup', function() {
+    var query = $(this).val();
+    $.ajax({
+      url: '/search_communities',
+      method: 'GET',
+      data: { q: query },
+      success: function(data) {
+        var $list = $('#community-list');
+        $list.empty();
+        if (data.communities.length === 0) {
+          $list.append('<div class="col-12 text-center">No communities found.</div>');
+        } else {
+          data.communities.forEach(function(community) {
+            $list.append(
+              '<div class="col-12 col-sm-6 col-lg-4 col-xl-3">' +
+                '<div class="card community-card h-100 shadow-sm">' +
+                  '<div class="card-body d-flex flex-column">' +
+                    '<h5 class="card-title">' + community.communityname + '</h5>' +
+                    '<h6 class="card-subtitle mb-2 text-muted">' + (community.category_name || 'Uncategorized') + '</h6>' +
+                    '<p class="card-text flex-grow-1">' + (community.community_desc || '') + '</p>' +
+                  '</div>' +
+                '</div>' +
+              '</div>'
+            );
+          });
+        }
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>

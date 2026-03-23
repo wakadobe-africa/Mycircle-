@@ -1,0 +1,65 @@
+<div class="card mb-3 post-card" data-post-id="{{ post.postId }}">
+
+<div class="card-body">
+
+<div class="message">
+
+<strong>
+
+{% if post.user_id == user_id %}
+You
+{% else %}
+{{ post.author.user_username }}
+{% endif %}
+
+</strong>
+
+<div class="mt-2">
+
+{{ post.post_content }}
+
+</div>
+
+</div>
+
+<button
+class="btn btn-sm btn-light toggle-comments mt-2"
+data-post-id="{{ post.postId }}">
+
+View Comments ({{ post.comments|length }})
+
+</button>
+
+</div>
+
+
+<div class="card-footer">
+
+
+{# comments section — hidden by default #}
+<div id="comments-{{ post.postId }}" style="display:none;">
+    {% for comment in post.comments %}
+        <div class="comment-item mb-1" id="comment-{{ comment.contribution_id }}">
+            <strong class="small">
+                {{ comment.user.user_username if comment.user else 'Anonymous' }}
+            </strong>
+            <span class="small ms-1">{{ comment.contribution_Content }}</span>
+            <span class="text-muted ms-2" style="font-size:11px;">
+                {{ comment.comment_Date.strftime('%b %d %H:%M') if comment.comment_Date else '' }}
+            </span>
+        </div>
+    {% else %}
+        <p class="text-muted small">No comments yet.</p>
+    {% endfor %}
+</div>
+
+<form class="comment-form mt-2" data-post_id="{{ post.postId }}" style="display:none;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="post_id" value="{{ post.postId }}">
+    <div class="input-group">
+        <input type="text" class="form-control" name="comment" placeholder="Write a comment...">
+        <button class="btn btn-outline-primary" type="submit">Comment</button>
+    </div>
+</form>
+
+</div>

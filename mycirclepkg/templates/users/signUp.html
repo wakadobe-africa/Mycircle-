@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/static/fontawesome/css/all.css">
+  <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/styles.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+
+  <header class="border-bottom">
+    <nav class="nav-bar container d-flex align-items-center justify-content-between py-3">
+      <div class="d-flex align-items-center gap-2">
+        <img src="/static/image/circle logo.jpg" alt="brand logo" width="40" height="40">
+        <h1 class="h4 mb-0">MyCIRCLE</h1>
+      </div>
+      <ul class="nav-list d-none d-md-flex gap-3 mb-0">
+        <li><a href="#">Community</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Features
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Gifting</a></li>
+            <li><a class="dropdown-item" href="#">Livestream</a></li>
+            <li><a class="dropdown-item" href="">Events</a></li>
+            <li><a class="dropdown-item" href="#">Polls</a></li>
+          </ul>
+        </li>
+        <li><a href="#">Members</a></li>
+      </ul>
+      <aside class="nav-btn d-flex gap-2">
+        <a href="#" class="btn btn-outline-primary btn-sm">Log In</a>
+        <a href="#" class="btn btn-primary btn-sm">Get Started</a>
+      </aside>
+
+    </nav>
+  </header>
+  <section class="container py-5">
+    <div class="card shadow-sm w-100 justify-content-center align-items-center mx-auto" style="max-width: 480px;">
+        <div class="card-body p-4">
+        <h2 class="text-center mb-4">Create an Account to Join A Community</h2>
+        <div class="text-center mb-4">
+          <p class="text-muted">Join thousands of members in our communities</p>
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    {% if category != 'admin' %}
+                                    <div class="alert alert-{{ 'danger' if category == 'user' else category }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+        <form method="POST">
+          {{createform.csrf_token}}
+          <div class="mb-3">
+            {{createform.email.label(class_="form-label")}}
+            {{createform.email(class_="form-control", placeholder="Enter your email")}}
+            <div class="form-text"><small>We'll never share your email with anyone else.</small></div>
+          </div>
+
+          <div class="mb-3">
+            {{createform.username(class_="form-control", placeholder="Create a username")}}
+            <div class="form-text"><small>Username should be unique</small></div>
+          </div>
+          <div class="mb-3">
+            {{createform.password.label(class_="form-label")}}
+            {{createform.password(class_="form-control",placeholder="Create a password")}}
+            {% if createform.password.errors %}
+            {% for error in createform.password.errors %}
+            <small class="text-danger">{{ error }}</small>
+            {% endfor %}
+            {% endif %}
+            <div class="form-text"><small>a secure password</small></div>
+          </div>
+
+          <div class="mb-3">
+            {{createform.con_password.label(class_="form-label")}}
+            {{createform.con_password(class_="form-control",placeholder="Re-enter password to confirm")}}
+            {% if createform.con_password.errors %}
+            {% for error in createform.con_password.errors %}
+            <small class="text-danger">{{ error }}</small>
+            {% endfor %}
+            {% endif %}
+
+          </div>
+
+          <div class="mb-3">
+            
+            <label for="invite" class="form-label">Invitation code</label>
+            <input type="text" class="form-control" id="invite" placeholder="Optional">
+            <div class="form-text"><small>Invite code received. Optional</small></div>
+          </div>
+
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="terms" name="checked">
+            <label class="form-check-label" for="terms">
+              I agree to the terms and privacy policy
+            </label>
+          </div>
+          <div>
+            {{createform.btncreate(class_="btn btn-primary w-100")}}
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <script src="/static/bootstrap/js/bootstrap.bundle.js"></script>
+</body>
+
+</html>

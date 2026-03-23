@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join A Community - MyCIRCLE</title>
+    <link rel="stylesheet" href="/static/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .comm-avatar {
+            width: 52px; height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800; font-size: 1.3rem;
+            color: #fff; flex-shrink: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <header class="border-bottom">
+        <nav class="nav-bar container-fluid d-flex align-ite        .nav-foot {
+          position: fixed;
+          bottom: 0;
+          width: 100%;
+          border-radius: 30px;
+          background-color: rgb(255, 255,255); 
+          box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+          z-index: 1000;
+          height: auto !important;
+        }ms-center justify-content-between py-3">
+            <div class="d-flex align-items-center gap-2">
+                <img src="/static/image/circle logo.jpg" alt="brand logo" width="40" height="40">
+                <h1 class="h4 mb-0">MyCIRCLE</h1>
+            </div>
+            <div class="admin_nav d-flex align-items-center gap-3">
+                <a href="{{ url_for('user_profile') }}" class="text-decoration-none">
+                    <h5 class="admin_profile mb-0 ms-5">
+                        {{ session['useronline'] }} <i class="fa-solid fa-circle-user"></i>
+                    </h5>
+                </a>
+                <a href="{{ url_for('user_logout') }}" class="btn btn-outline-primary btn-sm">Logout</a>
+            </div>
+        </nav>
+    </header>
+<div class="container mt-4">
+
+    {% if all_communities %}
+
+    <div class="mb-3 text-muted">
+        {{ all_communities | count }} communit{{ 'y' if all_communities | count == 1 else 'ies' }} available to join
+    </div>
+
+    <div class="row">
+
+        {% for community in all_communities %}
+
+        <div class="col-12 mb-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body d-flex">
+
+                    <!-- Avatar -->
+                    <div class="me-3">
+                        <div class="bg-primary text-white rounded-circle d-flex justify-content-center align-items-center"
+                             style="width:50px;height:50px;font-weight:bold;">
+                            {{ community.communityname[0] | upper }}
+                        </div>
+                    </div>
+
+                    <!-- Community Info -->
+                    <div class="flex-grow-1">
+
+                        <h5 class="card-title mb-1">
+                            {{ community.communityname }}
+                        </h5>
+
+                        <div class="text-muted small mb-2">
+                            <i class="fas fa-tag"></i>
+                            {{ community.category.category_name if community.category else 'Uncategorized' }}
+                        </div>
+
+                        <p class="card-text mb-2">
+                            {{ community.community_desc if community.community_desc else 'No description provided.' }}
+                        </p>
+
+                        <div class="text-muted small">
+                            <i class="fas fa-users"></i>
+                            {{ community.members | count }}
+                            member{{ 's' if community.members | count != 1 else '' }}
+                        </div>
+
+                    </div>
+
+                    <!-- Join Button -->
+                    <div class="ms-auto align-self-center">
+                        {% set membership = community.members|selectattr('member_id', 'equalto', session['userid'])|list %}
+                        {% if membership and membership[0].status == 'pending' %}
+                        <button class="btn btn-outline-secondary btn-sm" disabled>
+                            Pending
+                        </button>
+                        {% else %}
+                        <form method="POST"
+                              action="{{ url_for('send_join_request', community_id=community.idcommunity) }}" data-community="{{community.idcommunity}}" class="join-form">
+                              <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+                            <button class="btn btn-outline-primary btn-sm join-btn" type="button">
+                                Join
+                            </button>
+                        </form>
+                        
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="text-center text-muted mt-5">
+        <i class="fas fa-users fa-2x mb-3"></i>
+        <p>No communities available to join.</p>
+    </div>
+
+    {% endif %}
+<div class="nav-foot">
+<nav class="sticky-nav">
+    <a href="{{ url_for('dashboard') }}"><i class="fa-solid fa-house"></i>Home</a>
+    <a href="{{ url_for('my_communities') }}"><i class="fa-solid fa-users"></i>My Communities</a>
+    <a href="{{ url_for('communities') }}"><i class="fa-solid fa-layer-group"></i>Community</a>
+    <a href="{{ url_for('user_profile') }}"><i class="fa-solid fa-circle-user"></i>Profile</a> 
+</nav>
+ </div>
+</div>        
+<script src="/static/bootstrap/js/bootstrap.bundle.js"></script>
+<script src="/static/jquery-4.0.0.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $(".join-btn").click(function(e){
+
+    e.preventDefault()
+
+    let button = $(this)
+    let form = button.closest("form")
+    let url = form.attr("action")
+    let csrf = form.find("[name='csrf_token']").val()
+
+    button.text("Sending...").prop("disabled", true)
+
+    $.post(url,{csrf_token: csrf},function(response){
+
+        if(response.status == "login_required"){
+            window.location.href = "/login/"
+        }
+
+        button.text(response.message)
+
+    })
+
+})
+    })
+</script>
+</body>
+</html>
+
+

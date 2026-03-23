@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - MyCIRCLE</title>
+    <link rel="stylesheet" href="/static/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+      
+    </style>
+</head>
+<body>
+  <header>
+  <nav class="nav-bar container d-flex align-items-center justify-content-between py-3">
+    <div class="d-flex align-items-center gap-2">
+      <img src="/static/image/circle logo.jpg" alt="brand logo" width="40" height="40">
+      <h1 class="h4 mb-0">MyCIRCLE</h1>
+    </div>
+    <div class="admin_nav d-flex align-items-center gap-3">
+    <a href="{{ url_for('notifications') }}" class="text-decoration-none">
+    <div><i class="fa-solid fa-bell"></i></div>
+    </a>
+    <a href="{{ url_for('user_profile') }}" class="text-decoration-none">
+      <h5 class="admin_profile mb-0 ms-5">
+       {{ session['useronline'] }} <i class="fa-solid fa-circle-user"></i>
+      </h5>
+    </a>
+    <a href="{{ url_for('user_logout') }}" class="btn btn-outline-primary btn-sm">Logout</a>
+</div>
+
+  </nav>
+</header>
+    <section class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card shadow">
+            <div class="card-body">
+              <div class="rounded-circle overflow-hidden bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center mx-auto mb-3 position-relative" style="width: 120px; height: 120px; cursor: pointer;" onclick="document.getElementById('photo').click()">
+                                    {% if not userdeets.user_profilePic or userdeets.user_profilePic == '' %}
+                                      <img src="/static/image/profile_pic.png" class="w-100 h-100 object-fit-cover" alt="Default Profile">
+                                    {% else %}
+                                      <img src="/static/uploads/{{ userdeets.user_profilePic }}" class="w-100 h-100 object-fit-cover" alt="Profile">
+                                    {% endif %}
+                                    <div class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                                      <i class="fa-solid fa-camera fa-xs"></i>
+                                    </div>
+                                </div>
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <a href="{{ url_for('user_profile') }}" class="btn btn-outline-primary"><i class="fa-solid fa-arrow-left"></i> Back to Profile</a>
+              </div>
+              {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    {% if category != 'admin' %}
+                                    <div class="alert alert-{{ 'danger' if category == 'user' else category }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+              <form method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                  {{ updateform.photo.label(class="form-label") }}
+                  {{ updateform.photo(class="form-control d-none", id="photo") }}
+                  <div class="form-text">Click on the profile picture above to select a new image (JPG, PNG, GIF)</div>
+                  {% if updateform.photo.errors %}
+                    <div class="alert alert-danger mt-2">
+                      {% for error in updateform.photo.errors %}
+                        <small>{{ error }}</small><br>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+                {{ updateform.hidden_tag() }}
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    {{ updateform.firstname.label(class="form-label") }}
+                    {{ updateform.firstname(class="form-control") }}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    {{ updateform.lastname.label(class="form-label") }}
+                    {{ updateform.lastname(class="form-control") }}
+                  </div>
+                </div>
+                <div class="mb-3">
+                  {{ updateform.username.label(class="form-label") }}
+                  {{ updateform.username(class="form-control", placeholder="Create a username") }}
+                  {% if updateform.username.errors %}
+                    <div class="alert alert-danger mt-2">
+                      {% for error in updateform.username.errors %}<small>{{ error }}</small><br>{% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="mb-3">
+                  {{ updateform.email.label(class="form-label") }}
+                  {{ updateform.email(class="form-control") }}
+                  {% if updateform.email.errors %}
+                    <div class="alert alert-danger mt-2">
+                      {% for error in updateform.email.errors %}<small>{{ error }}</small><br>{% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    {{ updateform.current_password.label(class="form-label") }}
+                    {{ updateform.current_password(class="form-control", placeholder="Enter current password") }}
+                    <div class="form-text">Required only when changing password</div>
+                    {% if updateform.current_password.errors %}
+                      <div class="alert alert-danger mt-2">
+                        {% for error in updateform.current_password.errors %}<small>{{ error }}</small><br>{% endfor %}
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    {{ updateform.new_password.label(class="form-label") }}
+                    {{ updateform.new_password(class="form-control", placeholder="Enter new password") }}
+                    {% if updateform.new_password.errors %}
+                      <div class="alert alert-danger mt-2">
+                        {% for error in updateform.new_password.errors %}<small>{{ error }}</small><br>{% endfor %}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="mb-3">
+                  {{ updateform.confirm_new_password.label(class="form-label") }}
+                  {{ updateform.confirm_new_password(class="form-control", placeholder="Confirm new password") }}
+                  {% if updateform.confirm_new_password.errors %}
+                    <div class="alert alert-danger mt-2">
+                      {% for error in updateform.confirm_new_password.errors %}<small>{{ error }}</small><br>{% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="text-center">
+                  {{ updateform.btn(class="btn btn-primary btn-lg") }}
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="/static/bootstrap/js/bootstrap.bundle.js"></script>
+    <script>
+//       document.getElementById('photo').addEventListener('change', function(e) {
+//         const file = e.target.files[0];
+//         if (file) {
+//           const reader = new FileReader();
+//           reader.onload = function(e) {
+//             const img = document.querySelector('.rounded-circle img');
+//             if (img) {
+//               img.src = e.target.result;
+//             } else {
+//               // If no img element exists, replace the icon with an img
+//               const container = document.querySelector('.rounded-circle');
+//               container.innerHTML = '<img src="' + e.target.result + '" class="w-100 h-100 object-fit-cover" alt="Profile Preview"><div class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;"><i class="fa-solid fa-camera fa-xs"></i></div>';
+//             }
+//           };
+//           reader.readAsDataURL(file);
+//         }
+//       });
+//     </script>
+</body>
+</html>

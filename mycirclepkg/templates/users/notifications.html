@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Notifications page for MyCIRCLE">
+    <title>Notifications - MyCIRCLE</title>
+    <link rel="stylesheet" href="/static/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+<style>
+</style>
+
+</head>
+<body>
+<header>
+  <nav class="nav-bar container d-flex align-items-center justify-content-between py-3">
+    <div class="d-flex align-items-center gap-2">
+      <img src="/static/image/circle logo.jpg" alt="brand logo" width="40" height="40">
+      <h1 class="h4 mb-0">MyCIRCLE</h1>
+    </div>
+    <div class="admin_nav d-flex align-items-center gap-3">
+    <div><i class="fa-solid fa-bell"></i></div>
+    <a href="{{ url_for('user_profile') }}" class="text-decoration-none">
+      <h5 class="admin_profile mb-0 ms-5">
+       {{ session['useronline'] }} <i class="fa-solid fa-circle-user"></i>
+      </h5>
+    </a>
+    <a href="{{ url_for('user_logout') }}" class="btn btn-outline-primary btn-sm">Logout</a>
+</div>
+
+  </nav>
+</header>
+<div class="container py-4">
+    {% if pending_requests and pending_requests|length > 0 %}
+        <p>You have {{ pending_requests|length }} pending community join request(s).</p>
+        <!-- Loop through pending requests and display them -->
+        {% for req in pending_requests %}
+        <div class="card border-0 shadow-sm mb-3" style="border-radius:16px;">
+            <div class="card-body p-4">
+                <!-- Request info -->
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div style="width:46px;height:46px;border-radius:12px;
+                                background:linear-gradient(135deg,#1e5799,#2989d8);
+                                display:flex;align-items:center;justify-content:center;
+                                font-weight:800;font-size:1.1rem;color:#fff;flex-shrink:0;">
+                        {{ req.member.user_username[0] | upper if req.member else '?' }}
+                    </div>
+                    <div>
+                        <p class="mb-0 fw-semibold">
+                            <span class="text-primary">{{ req.member.user_username if req.member else 'Someone' }}</span>
+                            wants to join
+                            <span class="fw-bold">{{ req.community.communityname if req.community else 'your community' }}</span>
+                        </p>
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>
+                            {{ req.date_joined.strftime('%b %d, %Y · %H:%M') if req.date_joined else 'Just now' }}
+                        </small>
+                    </div>
+                </div>
+                <hr class="my-3" style="border-color:#f0f2f8;">
+                <!-- Buttons side by side using a single row -->
+                <div class="row g-2">
+                    <div class="col-6">
+                        <form method="post"
+                              action="{{ url_for('manage_request', community_id=req.community_id, user_id=req.member_id, action='approve') }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-success btn-sm approve-btn w-100" data-action="approve" data-community="{{ req.community_id }}" data-member="{{ req.member_id }}">
+                                <i class="fas fa-check me-1"></i> Accept
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-6">
+                        <form method="post"
+                              action="{{ url_for('manage_request', community_id=req.community_id, user_id=req.member_id, action='reject') }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-danger btn-sm reject-btn w-100" data-action="reject" data-community="{{ req.community_id }}" data-member="{{ req.member_id }}">
+                                <i class="fas fa-times me-1"></i> Reject
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-center text-muted p-5">
+            <i class="fas fa-bell fa-2x mb-2 d-block"></i>
+            <h5>No notifications yet</h5>
+        </div>
+    {% endif %}
+</div>
+<script src="/static/jquery-4.0.0.min.js"></script>
+<script>
+
+ $(document).on('submit', 'form[action*="/community/request/"]', function (e) {
+            e.preventDefault();
+            var form = $(this);
+            var btn = form.find('button[type="submit"], button').first();
+            var card = form.closest('.card');
+            var action = btn.data('action') || (form.attr('action').includes('/approve') ? 'approve' : 'reject');
+            var csrf = form.find('input[name="csrf_token"]').val();
+            btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Processing...');
+                    $.ajax({
+                           url: form.attr('action'),
+                            method: 'POST',
+                            data: { csrf_token: csrf },
+                            success: function () {
+                                    var isApprove = action === 'approve';
+                                    card.fadeOut(300, function () {
+                                    $(this).remove();
+                                    $('body').prepend(
+                                                `<div class="alert alert-${isApprove ? 'success' : 'warning'} alert-dismissible fade show mt-2">
+                                                    Request ${isApprove ? 'approved' : 'rejected'}
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                                </div>`
+                                            );
+                                        });
+                                    },
+                                    error: function () {
+                                        var fallback = action === 'approve'
+                                            ? '<i class="fas fa-check me-1"></i> Accept'
+                                            : '<i class="fas fa-times me-1"></i> Reject';
+                            
+                                        btn.prop('disabled', false).html(fallback);
+                                        alert('Error processing request.');
+                                    }
+                                });
+                });
+</script>
+                            
+</body>
+</html>

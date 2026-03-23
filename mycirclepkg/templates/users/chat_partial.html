@@ -1,0 +1,55 @@
+<link rel="stylesheet" href="/static/styles.css">
+
+<div class="chat-container">
+
+<div class="chat-header d-flex align-items-center gap-3 p-3 border-bottom">
+    <button id="closeChat" class="btn btn-link p-0 me-3" title="Back" style="font-size:1.5rem;">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+    <div class="avatar bg-primary text-white rounded-circle p-2">
+        {{ community.communityname[0] }}
+    </div>
+    <div>
+        <a href="{{ url_for('community_detail', community_id=community.idcommunity) }}" class="text-decoration-none">
+            <h5 class="mb-0 community-title" data-community-id="{{ community.idcommunity }}">
+                {{ community.communityname }}
+            </h5>
+        </a>
+        <small>{{ member_count }} members</small>
+    </div>
+</div>
+
+<script>
+$(document).on("click", "#closeChat", function() {
+    window.location.href = "{{ url_for('my_communities') }}";
+});
+</script>
+
+<div class="chatMessages p-3">
+
+{% for post in posts %}
+
+{% include "users/post_partial.html" %}
+
+{% endfor %}
+
+</div>
+
+<div class="chat-input-area">
+
+<form id="postForm" data-community-id="{{ community.idcommunity }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="community_id" value="{{ community.idcommunity }}">
+
+<div class="input-group">
+
+    <textarea class="form-control" id="messageInput" name="message" placeholder="Type a message"></textarea>
+    <button class="btn btn-primary">Send</button>
+
+</div> 
+
+</form>
+
+</div>
+
+</div>

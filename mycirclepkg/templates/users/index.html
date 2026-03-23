@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MyCIRCLE - A community engagement platform for building meaningful connections">
+    <title>MyCIRCLE - Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+      .highlight-cards .card {
+        border: 0;
+        border-radius: 1rem;
+        transition: transform 0.28s ease, box-shadow 0.28s ease;
+      }
+
+      .highlight-cards {
+        max-width: 1120px;
+      }
+
+      .highlight-cards .card:hover {
+        transform: scale(1.04);
+        box-shadow: 0 0.85rem 1.8rem rgba(0, 0, 0, 0.16);
+      }
+
+      .highlight-cards .card-body {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+    </style>
+</head>
+<body>
+<header class="border-bottom">
+  <nav class="nav-bar container-fluid d-flex align-items-center justify-content-between py-3">
+    <div class="d-flex align-items-center gap-2">
+      <img src="/static/image/circle logo.jpg" alt="brand logo" width="40" height="40">
+      <h2 class="h4 mb-0">MyCIRCLE</h2>
+    </div>
+    <ul class="nav-list d-none d-md-flex gap-3 mb-0">
+      <li><a href="#">Community</a></li>
+      <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Features
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Gifting</a></li>
+            <li><a class="dropdown-item" href="#">Livestream</a></li>
+            <li><a class="dropdown-item" href="#">Events</a></li>
+            <li><a class="dropdown-item" href="#">Polls</a></li>
+          </ul>
+        </li>
+      <li><a href="#">Members</a></li>
+    </ul>
+     <aside class="nav-btn d-flex gap-2">
+      <a href="{{url_for('user_login')}}" class="btn btn-outline-primary btn-sm">Log In</a>
+      <a href="{{url_for('user_register')}}" class="btn btn-primary btn-sm">Get Started</a>
+    </aside>
+
+  </nav>
+</header>
+<section class="container-fluid hero hero-white">
+    <h1>Group conversations That builds Community and bring people together</h1>
+    <a href="{{url_for('user_register')}}" class="btn btn-gradient">Get Started</a>
+    <p>MyCIRCLE is a home where real human connections and endless conversations thrive, and authentic movement develops.</p>
+    <p class="mb-0">Over 1000+ communities created</p>
+</section>
+<section class="container py-4 highlight-cards px-2 px-md-3">
+  <div class="row g-4">
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Meaningful Conversations</h5>
+          <p class="card-text mb-0">MyCIRCLE is the platform where real conversations thrive and where you find meaning.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Built for Engagement</h5>
+          <p class="card-text mb-0">A community engagement platform built to facilitate connection, participation, and development.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Your Circle, Connected</h5>
+          <p class="card-text">Keep your friends in the loop at all times and bring your inner circle along for the ride.</p>
+          <p class="card-text mb-0">There is a community on MyCIRCLE for you.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="features-section container-fluid">
+
+  <h2 class="fw-bold text-center mb-3">Features</h2>
+  <p class="text-muted text-center mb-4">
+    Powerful tools designed to help your community connect, engage, and grow.
+  </p>
+
+  <!-- Feature Buttons (Top Line) -->
+  <div class="feature-tabs text-center mb-4">
+    <button class="feature-btn active"
+      data-img="livestream.jpg"
+      data-title="Livestream"
+      data-target="livestream"
+      data-desc="Connect with your audience in real-time through live video sessions." onclick="showFeature('livestream')">
+      Livestream
+    </button>
+
+    <button class="feature-btn"
+      data-img="events.jpg"
+      data-title="Events"
+      data-target="events"
+      data-desc="Create and manage events that bring your community together." onclick="showFeature('events')">
+      Events
+    </button>
+
+    <button class="feature-btn"
+      data-img="gifting.jpg"
+      data-title="Gifting"
+      data-target="gifting"
+      data-desc="Send virtual gifts and appreciate members instantly." onclick="showFeature('gifting')">
+      Gifting
+    </button>
+
+    <button class="feature-btn"
+      data-img="polls.jpg"
+      data-title="Insights"
+      data-target="insights"
+      data-desc="" onclick="showFeature('insights')">
+      Insights
+    </button>
+  </div>
+
+  <!-- Main Feature Display -->
+  <div class="feature-display text-center" id="feature-livestream" data-feature="livestream">
+    <img id="feature-image" src="/static/image/livestream.jpg" alt="">
+    <div class="feature-overlay">
+      <h3 id="feature-title">Livestream</h3>
+      <p id="feature-desc">
+        Connect with your audience in real-time through live video sessions.
+      </p>
+    </div>
+  </div>
+  <div class="feature-display text-center" id="feature-events" data-feature="events">
+    <img id="feature-image3" src="/static/image/events.jpeg" alt="">
+    <div class="feature-overlay">
+      <h3 id="feature-title">Events</h3>
+      <p id="feature-desc">
+        Create and manage events that bring your community together.
+      </p>
+    </div>
+  </div>
+  <div class="feature-display text-center" id="feature-gifting" data-feature="gifting">
+    <img id="feature-image2" src="/static/image/gift.jpg" alt="">
+    <div class="feature-overlay">
+      <h3 id="feature-title">Gifting</h3>
+      <p id="feature-desc">
+        Send virtual gifts as rewards to appreciate members instantly.
+      </p>
+    </div>
+  </div>
+  
+  <div class="feature-display text-center" id="feature-insights" data-feature="insights">
+    <img id="feature-image4" src="/static/image/insights.jpg" alt="">
+    <div class="feature-overlay">
+      <h3 id="feature-title">Insights</h3>
+      <p id="feature-desc">
+        Gain insights into how your community is growing
+      </p>
+  </div>
+  </div>
+  
+
+</section>
+<section class="container-fluid myclass">
+  <div class="row mt-3">
+   <div class="col-md-12">
+    <h3 class="text-center mb-2">
+      Connect, Share, Collaborate and Grow
+    </h3>
+    </div>
+    </div>
+ <div class="row mt-5">
+  <div class="col-md-6">
+   <div class="build d-flex m-2">
+    <img src="/static/image/getIn.jpg" alt="build a home" class="img-fluid i-img">
+    <span class="text ms-2">Create an account on Mycircle for real and organic engagement. Don't miss out!</span>
+   </div>
+    <div class="build d-flex m-2">
+     <a href="{{ url_for('user_register') }}" class="btn btn-gradient">Join A Community</a>
+    </div>
+    </div>
+    <div class="col-md-3">
+     <p class="text">MyCIRCLE is a platform that rewards engagement. Simplify your networking and unlock hidden opportunities by organizing your community into dedicated and actionable circles.</p>
+     </div>
+     <div class="col-md-3">
+        <img src="/static/image/together.jpg" alt="spirit of community" class="img-fluid i-img">
+      </div>
+   </div>
+</section>
+
+<footer class="border-top py-3 text-center text-muted small">
+  <p class="mb-1" style="font-size:1.1rem;"><em>&copy; Wakadobe Labs. All rights reserved.</em></p>
+  <a href="{{ url_for('admin_login') }}" class="text-muted text-decoration-none" style="font-size:0.8rem;">Admin Portal</a>
+</footer>
+
+</body>
+
+<script src="{{ url_for('static', filename='jquery-4.0.0.min.js') }}"></script>
+<script>
+
+$(document).ready(function () {
+
+  const $buttons = $(".feature-btn");
+  const $features = $(".feature-display");
+
+  // Default state (first button & first feature)
+  if ($buttons.length && $features.length) {
+    $buttons.eq(0).addClass("active");
+    $features.eq(0).addClass("active");
+  }
+
+  $buttons.on("click", function () {
+
+    const index = $buttons.index(this);
+
+    // Remove active from all
+    $buttons.removeClass("active");
+    $features.removeClass("active");
+
+    // Activate clicked button
+    $(this).addClass("active");
+
+    // Show corresponding feature by index
+    $features.eq(index).addClass("active");
+
+  });
+
+});
+
+
+</script>
+</html>

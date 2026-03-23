@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Communities - MyCIRCLE</title>
+    <link rel="stylesheet" href="/static/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body { background: #f5f6fa; }
+
+        .community-sidebar {
+            height: 100vh;
+            overflow-y: auto;
+            background: white;
+            border-right: 1px solid #ddd;
+        }
+
+        .community-item {
+            display: block;
+            padding: 14px 18px;
+            text-decoration: none;
+            color: black;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.15s;
+        }
+        .community-item:hover { background: #f1f3f5; }
+        .community-item.active-community {
+            background: #e8f0fe;
+            border-left: 3px solid #1a73e8;
+        }
+
+        .community-name { font-weight: 600; }
+        .community-meta { font-size: 13px; color: #777; }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #888;
+            padding: 10px 18px;
+            text-transform: uppercase;
+        }
+
+        #chat-area {
+            height: 100vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row g-0">
+
+        <!-- SIDEBAR -->
+        <div class="col-md-3 community-sidebar">
+
+            <div class="p-3 d-flex align-items-center justify-content-between">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-link p-0" title="Back" style="font-size:1.5rem;">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <a href="{{ url_for('create_community') }}" class="btn btn-primary w-100">
+                    <i class="fas fa-plus me-1"></i> Create Community
+                </a>
+            </div>
+
+            <!-- CREATED COMMUNITIES -->
+            {% if created_communities %}
+                <div class="section-title">My Communities</div>
+                {% for community in created_communities %}
+                <a href="#"
+                   class="community-item open-community"
+                   data-community-id="{{ community.idcommunity }}">
+                    <div class="community-name">{{ community.communityname }}</div>
+                    <div class="community-meta">
+                        <i class="fas fa-crown me-1 text-warning"></i> Admin
+                    </div>
+                </a>
+                {% endfor %}
+            {% endif %}
+
+            <!-- MEMBER COMMUNITIES -->
+            {% if member_communities %}
+                <div class="section-title mt-2">Member Communities</div>
+                {% for community in member_communities %}
+                <a href="#"
+                   class="community-item open-community"
+                   data-community-id="{{ community.idcommunity }}">
+                    <div class="community-name">{{ community.communityname }}</div>
+                    <div class="community-meta">
+                        <i class="fas fa-user me-1 text-success"></i> Member
+                    </div>
+                </a>
+                {% endfor %}
+            {% endif %}
+
+            {% if not created_communities and not member_communities %}
+                <div class="text-center text-muted p-4">
+                    <i class="fas fa-users fa-2x mb-2 d-block"></i>
+                    <small>No communities yet</small>
+                </div>
+            {% endif %}
+
+        </div>
+
+        <!-- MAIN CHAT AREA -->
+        <div class="col-md-9">
+            <div id="chat-area" class="p-3">
+                <div class="text-center mt-5 text-muted">
+                    <i class="fas fa-comments fa-3x mb-3 d-block"></i>
+                    <p>Select a community to start chatting</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/static/bootstrap/js/bootstrap.bundle.js"></script>
+<script>
+
+    // 1. OPEN COMMUNITY CHAT
+    $(document).on("click", ".open-community", function(e) {
+        e.preventDefault()
+
+        let id = $(this).data("community-id")
+
+        $(".open-community").removeClass("active-community")
+        $(this).addClass("active-community")
+
+        $("#chat-area").html(`
+            <div class="text-center mt-5">
+                <div class="spinner-border text-primary"></div>
+            </div>`)
+
+        $.ajax({
+            url:    "/load-community-chat/" + id,
+            method: "GET",
+            success: function(html) {
+                $("#chat-area").html(html)
+                let msgs = document.getElementById("chatMessages")
+                if (msgs) {msgs.scrollTop = msgs.scrollHeight};
+            },
+            error: function() {
+                $("#chat-area").html(`
+                    <div class="text-center text-danger mt-5">
+                        Failed to load chat. Try again.
+                    </div>`)
+            }
+        })
+    })
+
+    // 2. CLOSE CHAT
+    $(document).on("click", "#closeChat", function() {
+        $("#chat-area").html(`
+            <div class="text-center mt-5 text-muted">
+                <i class="fas fa-comments fa-3x mb-3 d-block"></i>
+                <p>Select a community to start chatting</p>
+            </div>`)
+        $(".open-community").removeClass("active-community")
+    })
+
+    // 3. SEND MESSAGE
+    // 3. SEND MESSAGE
+$(document).on("submit", "#postForm", function(e) {
+    e.preventDefault()
+    e.stopPropagation()   // stops event reaching comment forms
+
+    let form        = $(this)
+    let communityId = form.data("community-id")
+    let message     = form.find("[name=message]").val().trim()
+    let csrf        = form.find("[name=csrf_token]").val()  // scoped to THIS form
+
+    if (!message) return
+
+    $.post("/create-post", {
+        community_id: communityId,
+        message:      message,
+        csrf_token:   csrf
+    },
+    function() {
+        $.get("/load-community-chat/" + communityId, function(html) {
+            $("#chat-area").html(html)
+        })
+    })
+})
+
+// 4. TOGGLE COMMENTS
+// 4. TOGGLE COMMENTS — no AJAX needed, comments already in DOM
+$(document).on("click", ".toggle-comments", function() {
+    let postId  = $(this).data("post-id")
+    let section = $("#comments-" + postId)
+    let form    = $(".comment-form[data-post_id='" + postId + "']")
+
+    section.slideToggle(200)
+    form.slideToggle(200)
+})
+
+// 5. SUBMIT COMMENT
+// 5. SUBMIT COMMENT
+$(document).on("submit", ".comment-form", function(e) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    let form   = $(this)
+    let postId = form.data("post_id")
+    let input  = form.find("[name=comment]")
+    let csrf   = form.find("[name=csrf_token]").val()
+
+    if (!input.val().trim()) return
+
+    $.post("/new/comment/", {
+        post_id:    postId,
+        comment:    input.val(),
+        csrf_token: csrf
+    },
+    function(res) {
+        // Append new comment directly instead of reloading
+        let section = $("#comments-" + postId)
+        let newComment = `
+            <div class="comment-item mb-1">
+                <strong class="small">You</strong>
+                <span class="small ms-1">${input.val()}</span>
+                <span class="text-muted ms-2" style="font-size:11px;">Just now</span>
+            </div>`
+
+        // Remove "No comments yet" if present
+        section.find("p.text-muted").remove()
+        section.append(newComment)
+
+        // Update the button count
+        let btn   = $(".toggle-comments[data-post-id='" + postId + "']")
+        let count = section.find(".comment-item").length
+        btn.text("View Comments (" + count + ")")
+
+        input.val("")
+    })
+})
+</script>
+</body>
+</html>

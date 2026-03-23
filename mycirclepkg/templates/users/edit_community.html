@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Community - MyCircle</title>
+    <link rel="stylesheet" href="/static/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header>
+  <nav class="nav-bar container d-flex align-items-center justify-content-between py-3">
+    <div class="d-flex align-items-center gap-2">
+      <img src="/static/image/circle logo.jpg" alt="brand logo" width="40" height="40">
+      <h1 class="h4 mb-0">MyCIRCLE</h1>
+    </div>
+    <div class="admin_nav d-flex align-items-center gap-3">
+    <a href="{{ url_for('notifications') }}" class="text-decoration-none">
+    <div><i class="fa-solid fa-bell"></i></div>
+    </a>
+    <a href="{{ url_for('user_profile') }}" class="text-decoration-none">
+      <h5 class="admin_profile mb-0 ms-5">
+       {{ session['useronline'] }} <i class="fa-solid fa-circle-user"></i>
+      </h5>
+    </a>
+    <a href="{{ url_for('user_logout') }}" class="btn btn-outline-primary btn-sm">Logout</a>
+</div>
+
+  </nav>
+</header>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="fas fa-edit"></i> Edit Community</h4>
+                    </div>
+                    <div class="card-body">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    {% if category != 'admin' %}
+                                    <div class="alert alert-{{ 'danger' if category == 'user' else category }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        <form method="POST">
+                            {{ editform.hidden_tag() }}
+                            <div class="mb-3">
+                                {{ editform.name_com.label(class="form-label") }}
+                                {{ editform.name_com(class="form-control") }}
+                                {% if editform.name_com.errors %}
+                                    {% for error in editform.name_com.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                {{ editform.desc_com.label(class="form-label") }}
+                                {{ editform.desc_com(class="form-control", rows=4) }}
+                                {% if editform.desc_com.errors %}
+                                    {% for error in editform.desc_com.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Select Category</label>
+                                <select class="form-select p-2 border-secondary form-control" id="category" name="category_id">
+                                    {% for c in categories %}
+                                    <option value="{{c.category_id}}" {% if c.category_id == editform.category_id.data %}selected{% endif %}>{{c.category_name|capitalize}}</option>
+                                    {% endfor %}
+                                </select>
+                                {% if editform.category_id.errors %}
+                                    {% for error in editform.category_id.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                <a href="{{ url_for('my_communities') }}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="card mt-4 shadow">
+                    <div class="card-header">
+                        <h5 class="mb-0">Community Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <strong>Name:</strong> {{ community.communityname }}
+                            </div>
+                            <div class="col-sm-6">
+                                <strong>Category:</strong> {{ community.category.category_name }}
+                            </div>
+                            <div class="col-12 mt-2">
+                                <strong>Description:</strong><br>
+                                {{ community.community_desc }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/bootstrap/js/bootstrap.bundle.js"></script>
+</body>
+</html>

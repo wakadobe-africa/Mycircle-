@@ -1,0 +1,70 @@
+# Virtual environments
+venv/
+env/
+vcircleapp/
+ENV/
+.venv
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Sensitive configuration files
+instance/config.py
+.env
+.env.local
+.env.*.local
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Uploaded files
+mycirclepkg/static/uploads/*
+!mycirclepkg/static/uploads/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Flask
+instance/__pycache__/
+.webassets-cache
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Migrations - only ignore if you want, but typically keep versions tracked
+# migrations/versions/*.py

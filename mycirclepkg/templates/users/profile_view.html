@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - MyCIRCLE</title>
+    <link rel="stylesheet" href="/static/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+      
+    </style>
+</head>
+<body>
+  <header>
+  <nav class="nav-bar container d-flex align-items-center justify-content-between py-3">
+    <div class="d-flex align-items-center gap-2">
+      <img src="/static/image/circle logo.jpg" alt="brand logo" width="40" height="40">
+      <h1 class="h4 mb-0">MyCIRCLE</h1>
+    </div>
+    <div class="admin_nav d-flex align-items-center gap-3">
+    <a href="{{ url_for('notifications') }}" class="text-decoration-none">
+    <div><i class="fa-solid fa-bell"></i></div>
+    </a>
+    <a href="{{ url_for('user_profile') }}" class="text-decoration-none">
+      <h5 class="admin_profile mb-0 ms-5">
+       {{ session['useronline'] }} <i class="fa-solid fa-circle-user"></i>
+      </h5>
+    </a>
+    <a href="{{ url_for('user_logout') }}" class="btn btn-outline-primary btn-sm">Logout</a>
+</div>
+
+  </nav>
+</header>
+    <section class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card shadow">
+            <div class="card-body text-center">
+              <div class="mb-3">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+              </div>
+             <div class="rounded-circle overflow-hidden bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center mx-auto mb-3 position-relative" style="width: 120px; height: 120px; cursor: pointer;" onclick="document.getElementById('photo').click()">
+                        {% if not userdeets.user_profilePic or userdeets.user_profilePic == '' %}
+                        <img src="/static/image/profile_pic.png" class="w-100 h-100 object-fit-cover" alt="Default Profile">
+                        {% else %}
+                        <img src="/static/uploads/{{ userdeets.user_profilePic }}" class="w-100 h-100 object-fit-cover" alt="Profile">
+                        {% endif %}
+              </div>
+              <h3 class="card-title m-4">{{ userdeets.user_fname }} {{ userdeets.user_lname }}</h3>
+              <div class="mb-2">
+                <strong>Username:</strong> {{ userdeets.user_username }}
+              </div>
+              <div class="mb-2">
+                <strong>Email:</strong> {{ userdeets.user_email }}
+              </div>
+              <div class="d-flex gap-2 justify-content-center">
+                <a href="{{ url_for('my_communities') }}" class="btn btn-outline-primary">
+                  <i class="fas fa-users"></i> My Communities
+                </a>
+                <a href="{{ url_for('profile_update') }}" class="btn btn-primary">Edit Profile</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="/static/bootstrap/js/bootstrap.bundle.js"></script>
+</body>
+</html>
