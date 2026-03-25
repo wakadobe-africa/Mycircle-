@@ -9,7 +9,10 @@ def create_app():
     from mycirclepkg.model import db
     app=Flask(__name__, instance_relative_config=True)
 
-    app.config.from_pyfile('config.py')
+    # Load instance/config.py when present (local dev).  Use silent=True so
+    # the app can start in production without a local file.
+    app.config.from_pyfile('config.py', silent=True)
+    # Apply class-based config last; env-var values win over the file.
     app.config.from_object(LiveConfig)
 
     db.init_app(app)

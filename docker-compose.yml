@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME:-mycircledb}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=${DB_PASSWORD}", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    restart: always
+    ports:
+      - "${PORT:-5000}:5000"
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DATABASE_URI: mysql+mysqlconnector://root:${DB_PASSWORD}@db/${DB_NAME:-mycircledb}
+      FLASK_DEBUG: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      # Persist user-uploaded files outside the container
+      - uploads:/app/mycirclepkg/static/uploads
+
+volumes:
+  db_data:
+  uploads:
