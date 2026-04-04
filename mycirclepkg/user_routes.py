@@ -13,7 +13,7 @@ def get_user_id():
 
 @app.errorhandler(404)
 def errorNotfound(error):
-    return render_template('user/404.html', error=error),404
+    return render_template('404.html', error=error),404
 
 @app.after_request
 def add_header(response):
