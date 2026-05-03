@@ -30,7 +30,6 @@ wheels/
 *.egg
 
 # Sensitive configuration files
-instance/config.py
 .env
 .env.local
 .env.*.local
